@@ -16,58 +16,199 @@ EmployeeManagementSystem/
 
 ## 🛠 Features Implemented
 
-### 1. 🎯 Schema Design
-- **Tables Created**: `Employee`, `Department`
-- Foreign key relationship: `Employee.DepartmentID` → `Department.DepartmentID`  
-📷 [`schema_design.png`](Screenshots/schema_design.png)
+<details> <summary><strong>1. Schema Design (Tables: Department & Employee)</strong></summary>
+sql
+Copy
+Edit
+CREATE TABLE Department (
+    DepartmentID INT PRIMARY KEY IDENTITY,
+    DepartmentName VARCHAR(100)
+);
 
-### 2. 📥 Insert Queries
-- Sample data for departments and employees.  
-📷 [`insert_query.png`](Screenshots/insert_query.png)
+CREATE TABLE Employee (
+    EmployeeID INT PRIMARY KEY IDENTITY,
+    Name VARCHAR(100),
+    Salary DECIMAL(10, 2),
+    DepartmentID INT FOREIGN KEY REFERENCES Department(DepartmentID),
+    HireDate DATE DEFAULT GETDATE()
+);
 
-### 3. 🧱 Table Creation
-- Structure for both tables with data types, keys, and default values.  
-📷 [`table_creation.png`](Screenshots/table_creation.png)
+🔗 View Full Image
 
-### 4. 🔍 CTE – Top Earners
-- CTE to list employees earning above ₹50,000.  
-📷 [`cte_top_earners.png`](Screenshots/cte_top_earners.png)
+</details>
+<details> <summary><strong>2. Insert Sample Data</strong></summary>
+sql
+Copy
+Edit
+INSERT INTO Department (DepartmentName) VALUES ('HR'), ('IT'), ('Finance');
 
-### 5. 🔁 Data Type Conversion
-- Example using `CAST()` to convert salary into string.  
-📷 [`data_type_conversion.png`](Screenshots/data_type_conversion.png)
+INSERT INTO Employee (Name, Salary, DepartmentID) VALUES
+('Alice', 50000, 1),
+('Bob', 70000, 2),
+('Charlie', 60000, 3),
+('David', 40000, 2);
 
-### 6. 🧾 Stored Procedure with Output Message
-- Procedure to insert employee and return a success message.  
-📷 [`sp_add_employee_output.png`](Screenshots/sp_add_employee_output.png)
+🔗 View Full Image
 
-### 7. 👁️ View – Employee with Department
-- View joining employee and department details.  
-📷 [`view_output.png`](Screenshots/view_output.png)
+</details>
+<details> <summary><strong>3. Create View</strong></summary>
+sql
+Copy
+Edit
+CREATE VIEW vw_EmployeeDetails AS
+SELECT e.EmployeeID, e.Name, e.Salary, d.DepartmentName, e.HireDate
+FROM Employee e
+JOIN Department d ON e.DepartmentID = d.DepartmentID;
 
-### 8. 📐 Scalar Function – Annual Salary
-- Function that calculates annual salary from monthly.  
-📷 [`scalar_function_output.png`](Screenshots/scalar_function_output.png)
+🔗 View Full Image
 
-### 9. 📊 Table-valued Function – Employees by Department
-- Returns employees from a given department.  
-📷 [`function_output.png`](Screenshots/function_output.png)
+</details>
+<details> <summary><strong>4. CTE – Top Earners</strong></summary>
+sql
+Copy
+Edit
+WITH TopEarners AS (
+    SELECT Name, Salary
+    FROM Employee
+    WHERE Salary > 50000
+)
+SELECT * FROM TopEarners;
 
-### 10. 🔄 After Trigger – Log Insertions
-- Automatically logs inserted employee data.  
-📷 [`insert_trigger_log.png`](Screenshots/insert_trigger_log.png)
+🔗 View Full Image
 
-### 11. ❌ Instead Of Trigger – Delete Restriction
-- Prevents deletion if salary is more than ₹60,000.  
-📷 [`delete_trigger_test.png`](Screenshots/delete_trigger_test.png)
+</details>
+<details> <summary><strong>5. Data Type Conversion</strong></summary>
+sql
+Copy
+Edit
+SELECT Name, CAST(Salary AS VARCHAR(10)) AS SalaryText FROM Employee;
 
-### 12. 🔄 Transaction + Isolation Level
-- Increases salary inside a transaction with `READ COMMITTED`.  
-📷 [`transaction_output.png`](Screenshots/transaction_output.png)
+🔗 View Full Image
 
-### 13. 🗂️ Index Creation
-- Clustered and non-clustered index creation.  
-📷 [`index_list.png`](Screenshots/index_list.png)
+</details>
+<details> <summary><strong>6. Stored Procedure with OUTPUT Message</strong></summary>
+sql
+Copy
+Edit
+CREATE PROCEDURE AddEmployee
+    @Name VARCHAR(100),
+    @Salary DECIMAL(10,2),
+    @DepartmentID INT,
+    @Message VARCHAR(100) OUTPUT
+AS
+BEGIN
+    INSERT INTO Employee (Name, Salary, DepartmentID)
+    VALUES (@Name, @Salary, @DepartmentID);
+    SET @Message = 'Employee added successfully';
+END;
+
+🔗 View Full Image
+
+</details>
+<details> <summary><strong>7. Scalar Function – Calculate Annual Salary</strong></summary>
+sql
+Copy
+Edit
+CREATE FUNCTION fn_GetAnnualSalary(@MonthlySalary DECIMAL(10,2))
+RETURNS DECIMAL(10,2)
+AS
+BEGIN
+    RETURN @MonthlySalary * 12;
+END;
+
+🔗 View Full Image
+
+</details>
+<details> <summary><strong>8. Table-Valued Function – Get Employees by Department</strong></summary>
+sql
+Copy
+Edit
+CREATE FUNCTION fn_GetEmployeesByDept(@DeptID INT)
+RETURNS TABLE
+AS
+RETURN (
+    SELECT * FROM Employee WHERE DepartmentID = @DeptID
+);
+
+🔗 View Full Image
+
+</details>
+<details> <summary><strong>9. AFTER Trigger – Insert Log</strong></summary>
+sql
+Copy
+Edit
+CREATE TRIGGER trg_AfterInsertEmployee
+ON Employee
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO EmployeeLog (EmployeeID, ActionType)
+    SELECT EmployeeID, 'INSERT' FROM INSERTED;
+END;
+
+🔗 View Full Image
+
+</details>
+<details> <summary><strong>10. INSTEAD OF DELETE Trigger – Prevent High Salary Deletion</strong></summary>
+sql
+Copy
+Edit
+CREATE TRIGGER trg_InsteadOfDelete
+ON Employee
+INSTEAD OF DELETE
+AS
+BEGIN
+    DELETE FROM Employee
+    WHERE EmployeeID IN (SELECT EmployeeID FROM DELETED WHERE Salary <= 60000);
+END;
+
+🔗 View Full Image
+
+</details>
+<details> <summary><strong>11. Transaction with Isolation Level</strong></summary>
+sql
+Copy
+Edit
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+BEGIN TRANSACTION;
+    UPDATE Employee SET Salary = Salary + 1000 WHERE Name = 'Alice';
+COMMIT;
+
+🔗 View Full Image
+
+</details>
+<details> <summary><strong>12. Index Creation</strong></summary>
+sql
+Copy
+Edit
+CREATE CLUSTERED INDEX idx_EmployeeID ON Employee(EmployeeID);
+CREATE NONCLUSTERED INDEX idx_EmployeeName ON Employee(Name);
+
+🔗 View Full Image
+
+</details>
+<details> <summary><strong>13. Optimized Query with Execution Plan</strong></summary>
+sql
+Copy
+Edit
+-- Before Optimization
+SELECT * FROM Employee;
+
+-- After Optimization
+SELECT e.Name, e.Salary, d.DepartmentName
+FROM Employee e
+JOIN Department d ON e.DepartmentID = d.DepartmentID
+WHERE e.Salary > 50000;
+📌 Before Optimization:
+
+🔗 View Full Image
+
+✅ After Optimization:
+
+🔗 View Full Image
+
+</details>
 
 ---
 
