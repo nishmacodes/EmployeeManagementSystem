@@ -17,9 +17,7 @@ EmployeeManagementSystem/
 ## 🛠 Features Implemented
 
 <details> <summary><strong>1. Schema Design (Tables: Department & Employee)</strong></summary>
-sql
-Copy
-Edit
+    
 CREATE TABLE Department (
     DepartmentID INT PRIMARY KEY IDENTITY,
     DepartmentName VARCHAR(100)
@@ -37,9 +35,7 @@ CREATE TABLE Employee (
 
 </details>
 <details> <summary><strong>2. Insert Sample Data</strong></summary>
-sql
-Copy
-Edit
+
 INSERT INTO Department (DepartmentName) VALUES ('HR'), ('IT'), ('Finance');
 
 INSERT INTO Employee (Name, Salary, DepartmentID) VALUES
@@ -52,9 +48,7 @@ INSERT INTO Employee (Name, Salary, DepartmentID) VALUES
 
 </details>
 <details> <summary><strong>3. Create View</strong></summary>
-sql
-Copy
-Edit
+
 CREATE VIEW vw_EmployeeDetails AS
 SELECT e.EmployeeID, e.Name, e.Salary, d.DepartmentName, e.HireDate
 FROM Employee e
@@ -64,9 +58,7 @@ JOIN Department d ON e.DepartmentID = d.DepartmentID;
 
 </details>
 <details> <summary><strong>4. CTE – Top Earners</strong></summary>
-sql
-Copy
-Edit
+
 WITH TopEarners AS (
     SELECT Name, Salary
     FROM Employee
@@ -78,18 +70,14 @@ SELECT * FROM TopEarners;
 
 </details>
 <details> <summary><strong>5. Data Type Conversion</strong></summary>
-sql
-Copy
-Edit
+
 SELECT Name, CAST(Salary AS VARCHAR(10)) AS SalaryText FROM Employee;
 
 🔗 View Full Image
 
 </details>
 <details> <summary><strong>6. Stored Procedure with OUTPUT Message</strong></summary>
-sql
-Copy
-Edit
+
 CREATE PROCEDURE AddEmployee
     @Name VARCHAR(100),
     @Salary DECIMAL(10,2),
@@ -106,9 +94,7 @@ END;
 
 </details>
 <details> <summary><strong>7. Scalar Function – Calculate Annual Salary</strong></summary>
-sql
-Copy
-Edit
+
 CREATE FUNCTION fn_GetAnnualSalary(@MonthlySalary DECIMAL(10,2))
 RETURNS DECIMAL(10,2)
 AS
@@ -120,9 +106,7 @@ END;
 
 </details>
 <details> <summary><strong>8. Table-Valued Function – Get Employees by Department</strong></summary>
-sql
-Copy
-Edit
+
 CREATE FUNCTION fn_GetEmployeesByDept(@DeptID INT)
 RETURNS TABLE
 AS
@@ -134,9 +118,7 @@ RETURN (
 
 </details>
 <details> <summary><strong>9. AFTER Trigger – Insert Log</strong></summary>
-sql
-Copy
-Edit
+
 CREATE TRIGGER trg_AfterInsertEmployee
 ON Employee
 AFTER INSERT
@@ -150,9 +132,7 @@ END;
 
 </details>
 <details> <summary><strong>10. INSTEAD OF DELETE Trigger – Prevent High Salary Deletion</strong></summary>
-sql
-Copy
-Edit
+
 CREATE TRIGGER trg_InsteadOfDelete
 ON Employee
 INSTEAD OF DELETE
@@ -166,9 +146,7 @@ END;
 
 </details>
 <details> <summary><strong>11. Transaction with Isolation Level</strong></summary>
-sql
-Copy
-Edit
+
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
 BEGIN TRANSACTION;
@@ -179,9 +157,7 @@ COMMIT;
 
 </details>
 <details> <summary><strong>12. Index Creation</strong></summary>
-sql
-Copy
-Edit
+
 CREATE CLUSTERED INDEX idx_EmployeeID ON Employee(EmployeeID);
 CREATE NONCLUSTERED INDEX idx_EmployeeName ON Employee(Name);
 
@@ -189,9 +165,7 @@ CREATE NONCLUSTERED INDEX idx_EmployeeName ON Employee(Name);
 
 </details>
 <details> <summary><strong>13. Optimized Query with Execution Plan</strong></summary>
-sql
-Copy
-Edit
+
 -- Before Optimization
 SELECT * FROM Employee;
 
