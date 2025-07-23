@@ -14,10 +14,10 @@ EmployeeManagementSystem/
 
 ---
 
-## 🛠 Features Implemented
+## 🚀 Features Implemented
 
-<details> <summary><strong>1. Schema Design (Tables: Department & Employee)</strong></summary>
-    
+### 🧱 1. Table Creation
+```sql
 CREATE TABLE Department (
     DepartmentID INT PRIMARY KEY IDENTITY,
     DepartmentName VARCHAR(100)
@@ -30,12 +30,13 @@ CREATE TABLE Employee (
     DepartmentID INT FOREIGN KEY REFERENCES Department(DepartmentID),
     HireDate DATE DEFAULT GETDATE()
 );
+```
+📸 ![Table Creation](Screenshots/table_creation.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>2. Insert Sample Data</strong></summary>
-
+### 🗃️ 2. Insert Sample Data
+```sql
 INSERT INTO Department (DepartmentName) VALUES ('HR'), ('IT'), ('Finance');
 
 INSERT INTO Employee (Name, Salary, DepartmentID) VALUES
@@ -43,41 +44,45 @@ INSERT INTO Employee (Name, Salary, DepartmentID) VALUES
 ('Bob', 70000, 2),
 ('Charlie', 60000, 3),
 ('David', 40000, 2);
+```
+📸 ![Insert Query](Screenshots/insert_query.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>3. Create View</strong></summary>
-
+### 👁️ 3. Create View
+```sql
 CREATE VIEW vw_EmployeeDetails AS
 SELECT e.EmployeeID, e.Name, e.Salary, d.DepartmentName, e.HireDate
 FROM Employee e
 JOIN Department d ON e.DepartmentID = d.DepartmentID;
+```
+📸 ![View Output](Screenshots/view_output.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>4. CTE – Top Earners</strong></summary>
-
+### 💡 4. CTE – Top Earners
+```sql
 WITH TopEarners AS (
     SELECT Name, Salary
     FROM Employee
     WHERE Salary > 50000
 )
 SELECT * FROM TopEarners;
+```
+📸 ![CTE Top Earners](Screenshots/cte_top_earners.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>5. Data Type Conversion</strong></summary>
-
+### 🔁 5. Data Type Conversion
+```sql
 SELECT Name, CAST(Salary AS VARCHAR(10)) AS SalaryText FROM Employee;
+```
+📸 ![Data Type Conversion](Screenshots/data_type_conversion.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>6. Stored Procedure with OUTPUT Message</strong></summary>
-
+### ⚙️ 6. Stored Procedure – Add Employee
+```sql
 CREATE PROCEDURE AddEmployee
     @Name VARCHAR(100),
     @Salary DECIMAL(10,2),
@@ -89,36 +94,39 @@ BEGIN
     VALUES (@Name, @Salary, @DepartmentID);
     SET @Message = 'Employee added successfully';
 END;
+```
+📸 ![SP Output](Screenshots/sp_add_employee_output.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>7. Scalar Function – Calculate Annual Salary</strong></summary>
-
+### 🔧 7. Scalar Function – Annual Salary
+```sql
 CREATE FUNCTION fn_GetAnnualSalary(@MonthlySalary DECIMAL(10,2))
 RETURNS DECIMAL(10,2)
 AS
 BEGIN
     RETURN @MonthlySalary * 12;
 END;
+```
+📸 ![Scalar Function](Screenshots/scalar_function_output.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>8. Table-Valued Function – Get Employees by Department</strong></summary>
-
+### 📊 8. Table-Valued Function – Employees by Department
+```sql
 CREATE FUNCTION fn_GetEmployeesByDept(@DeptID INT)
 RETURNS TABLE
 AS
 RETURN (
     SELECT * FROM Employee WHERE DepartmentID = @DeptID
 );
+```
+📸 ![TVF Output](Screenshots/function_output.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>9. AFTER Trigger – Insert Log</strong></summary>
-
+### 🔐 9. AFTER Trigger – Insert Log
+```sql
 CREATE TRIGGER trg_AfterInsertEmployee
 ON Employee
 AFTER INSERT
@@ -127,12 +135,13 @@ BEGIN
     INSERT INTO EmployeeLog (EmployeeID, ActionType)
     SELECT EmployeeID, 'INSERT' FROM INSERTED;
 END;
+```
+📸 ![Insert Trigger Log](Screenshots/insert_trigger_log.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>10. INSTEAD OF DELETE Trigger – Prevent High Salary Deletion</strong></summary>
-
+### ❌ 10. INSTEAD OF DELETE Trigger – Restrict Deletion
+```sql
 CREATE TRIGGER trg_InsteadOfDelete
 ON Employee
 INSTEAD OF DELETE
@@ -141,31 +150,33 @@ BEGIN
     DELETE FROM Employee
     WHERE EmployeeID IN (SELECT EmployeeID FROM DELETED WHERE Salary <= 60000);
 END;
+```
+📸 ![Delete Trigger Test](Screenshots/delete_trigger_test.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>11. Transaction with Isolation Level</strong></summary>
-
+### 💳 11. Transaction with Isolation Level
+```sql
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
 BEGIN TRANSACTION;
     UPDATE Employee SET Salary = Salary + 1000 WHERE Name = 'Alice';
 COMMIT;
+```
+📸 ![Transaction Output](Screenshots/transaction_output.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>12. Index Creation</strong></summary>
-
+### 📌 12. Indexes – Clustered & Non-Clustered
+```sql
 CREATE CLUSTERED INDEX idx_EmployeeID ON Employee(EmployeeID);
 CREATE NONCLUSTERED INDEX idx_EmployeeName ON Employee(Name);
+```
+📸 ![Index List](Screenshots/index_list.png)
 
-🔗 View Full Image
+---
 
-</details>
-<details> <summary><strong>13. Optimized Query with Execution Plan</strong></summary>
-
+### ⚡ 13. Execution Plan Optimization
+```sql
 -- Before Optimization
 SELECT * FROM Employee;
 
@@ -174,27 +185,9 @@ SELECT e.Name, e.Salary, d.DepartmentName
 FROM Employee e
 JOIN Department d ON e.DepartmentID = d.DepartmentID
 WHERE e.Salary > 50000;
-📌 Before Optimization:
-
-🔗 View Full Image
-
-✅ After Optimization:
-
-🔗 View Full Image
-
-</details>
-
----
-
-## ⚡ Query Optimization
-
-### 🔴 Before Optimization
-- Example query without index or filters.  
-📷 [`execution_plan_before_optimization.png`](Screenshots/execution_plan_before_optimization.png)
-
-### ✅ After Optimization
-- Optimized with WHERE, JOIN, and selective columns.  
-📷 [`execution_plan_after_optimization.png`](Screenshots/execution_plan_after_optimization.png)
+```
+📸 ![Before Optimization](Screenshots/execution_plan_before_optimization.png)  
+📸 ![After Optimization](Screenshots/execution_plan_after_optimization.png)
 
 ---
 
